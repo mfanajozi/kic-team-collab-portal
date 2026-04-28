@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npx next *)",
+      "Bash(mv next.config.ts next.config.mjs)",
+      "Bash(sed -i 's/import type { NextConfig } from .next.;//' next.config.mjs)",
+      "Bash(node -e \"require\\('dotenv'\\).config\\({path:'.env.local'}\\); const s=process.env.JWT_SECRET; console.log\\('JWT_SECRET present:', !!s, '| length:', s?.length\\)\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\sentr\\.claude\\projects\\c--Users-sentr-Downloads-Mzi-Stuff-Jaco-kic-collab-tool\\memory"
+    ]
+  }
+}

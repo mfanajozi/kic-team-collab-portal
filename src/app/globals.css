@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Default theme variables ──────────────────────────────────────────────── */
+:root {
+  --user-color: #5C6BC0;
+  --ur: 92;
+  --ug: 107;
+  --ub: 192;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  /* ── Scrollbar ──────────────────────────────────────────────────────────── */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.15) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 9999px; }
+
+  /* ── Text clamp ─────────────────────────────────────────────────────────── */
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  /* ── Glassmorphism cards ────────────────────────────────────────────────── */
+  .glass {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  .glass-input {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #f1f5f9 !important;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .glass-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.10) !important;
+    border-color: rgba(var(--ur), var(--ug), var(--ub), 0.7) !important;
+    box-shadow: 0 0 0 3px rgba(var(--ur), var(--ug), var(--ub), 0.15);
+  }
+
+  .glass-input::placeholder { color: rgba(255,255,255,0.35); }
+
+  /* ── User-colour accents ────────────────────────────────────────────────── */
+  .user-bg { background-color: var(--user-color); }
+  .user-border { border-color: var(--user-color); }
+  .user-text { color: var(--user-color); }
+
+  .user-btn {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--ur), var(--ug), var(--ub), 1) 0%,
+      rgba(var(--ur), var(--ug), var(--ub), 0.75) 100%
+    );
+    color: #fff;
+    border: none;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 4px 20px rgba(var(--ur), var(--ug), var(--ub), 0.4);
+  }
+
+  .user-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+  .user-btn:active { transform: translateY(0); }
+  .user-btn:disabled { opacity: 0.45; transform: none; }
+
+  .user-glow {
+    box-shadow: 0 0 30px rgba(var(--ur), var(--ug), var(--ub), 0.35),
+                0 0 60px rgba(var(--ur), var(--ug), var(--ub), 0.15);
+  }
+
+  /* ── Page gradient background ───────────────────────────────────────────── */
+  .theme-bg {
+    min-height: 100vh;
+    background:
+      radial-gradient(
+        ellipse 80% 60% at 10% 0%,
+        rgba(var(--ur), var(--ug), var(--ub), 0.25) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 90% 100%,
+        rgba(var(--ur), var(--ug), var(--ub), 0.12) 0%,
+        transparent 60%
+      ),
+      linear-gradient(160deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  }
+
+  /* ── Auth page gradient (no user color yet) ─────────────────────────────── */
+  .auth-bg {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 10%, rgba(92,107,192,0.3) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 80% 90%, rgba(139,36,170,0.2) 0%, transparent 55%),
+      linear-gradient(160deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  }
+
+  /* ── Nav active item ────────────────────────────────────────────────────── */
+  .nav-active {
+    background: rgba(var(--ur), var(--ug), var(--ub), 0.18);
+    color: #fff;
+    border-left: 3px solid var(--user-color);
+  }
+
+  .nav-item {
+    border-left: 3px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+  }
+}
