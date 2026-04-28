@@ -5,11 +5,18 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { applyUserTheme } from '@/lib/theme';
 
-const COMPANY_INFO: Record<string, { name: string; icon: string }> = {
-  cbt: { name: 'Code Bridge Technologies', icon: '💻' },
-  cbs: { name: 'Cornerstone Business Consulting', icon: '🏛️' },
-  kic: { name: 'K-I-C Global Group', icon: '🌐' },
-  ppms: { name: 'Pulse Point Marketing Services', icon: '📣' },
+interface CompanyInfo {
+  key: string;
+  name: string;
+  domain: string | null;
+  logo: string | null;
+}
+
+const DEFAULT_LOGOS: Record<string, string> = {
+  cbt: '💻',
+  cbs: '🏛️',
+  kic: '🌐',
+  ppms: '📣',
 };
 
 const CATEGORIES = ['Content', 'Design', 'Strategy', 'About'] as const;
@@ -86,7 +93,7 @@ export default function PortalPage() {
   const params = useParams();
   const router = useRouter();
   const company = params.company as string;
-  const info = COMPANY_INFO[company];
+  const [info, setInfo] = useState<CompanyInfo | null>(null);
 
   const [user, setUser] = useState<User | null>(null);
   const [ideas, setIdeas] = useState<Idea[]>([]);
@@ -101,6 +108,13 @@ export default function PortalPage() {
   const [detailIdea, setDetailIdea] = useState<Idea | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [editIdea, setEditIdea] = useState<Idea | null>(null);
+
+  useEffect(() => {
+    fetch('/api/companies').then((r) => r.json()).then((companies: CompanyInfo[]) => {
+      const found = companies.find((c) => c.key === company);
+      if (found) setInfo(found);
+    }).catch(() => {});
+  }, [company]);
 
   const loadIdeas = useCallback(async () => {
     const p = new URLSearchParams({ company });
@@ -188,10 +202,14 @@ export default function PortalPage() {
           </Link>
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl overflow-hidden"
               style={{ background: 'rgba(var(--ur),var(--ug),var(--ub),0.25)', border: '1px solid rgba(var(--ur),var(--ug),var(--ub),0.4)' }}
             >
-              {info.icon}
+              {info.logo ? (
+                <img src={info.logo} alt="" className="w-full h-full object-contain p-1" />
+              ) : (
+                DEFAULT_LOGOS[company] || '🏢'
+              )}
             </div>
             <div>
               <p className="font-semibold text-white text-sm leading-tight">{info.name}</p>

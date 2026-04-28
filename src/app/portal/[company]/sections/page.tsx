@@ -4,11 +4,17 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const COMPANY_INFO: Record<string, { name: string; icon: string }> = {
-  cbt: { name: 'Code Bridge Technologies', icon: '💻' },
-  cbs: { name: 'Cornerstone Business Consulting', icon: '🏛️' },
-  kic: { name: 'K-I-C Global Group', icon: '🌐' },
-  ppms: { name: 'Pulse Point Marketing Services', icon: '📣' },
+interface CompanyInfo {
+  key: string;
+  name: string;
+  logo: string | null;
+}
+
+const DEFAULT_LOGOS: Record<string, string> = {
+  cbt: '💻',
+  cbs: '🏛️',
+  kic: '🌐',
+  ppms: '📣',
 };
 
 const STATUS_COLOURS: Record<string, string> = {
@@ -52,7 +58,7 @@ export default function SectionsPage() {
   const params = useParams();
   const router = useRouter();
   const company = params.company as string;
-  const info = COMPANY_INFO[company];
+  const [info, setInfo] = useState<CompanyInfo | null>(null);
 
   const [sections, setSections] = useState<Section[]>([]);
   const [user, setUser] = useState<User | null>(null);
@@ -69,6 +75,10 @@ export default function SectionsPage() {
 
   useEffect(() => {
     fetch('/api/me').then((r) => r.json()).then(setUser).catch(() => {});
+    fetch('/api/companies').then((r) => r.json()).then((companies: CompanyInfo[]) => {
+      const found = companies.find((c) => c.key === company);
+      if (found) setInfo(found);
+    }).catch(() => {});
     loadSections();
   }, [company]);
 
@@ -115,7 +125,13 @@ export default function SectionsPage() {
               ← Back
             </Link>
             <span className="text-slate-300">|</span>
-            <span className="text-xl">{info.icon}</span>
+            <div className="w-6 h-6 flex items-center justify-center text-lg overflow-hidden">
+              {info.logo ? (
+                <img src={info.logo} alt="" className="w-full h-full object-contain" />
+              ) : (
+                DEFAULT_LOGOS[company] || '🏢'
+              )}
+            </div>
             <div>
               <h1 className="font-semibold text-slate-900 text-sm">{info.name}</h1>
               <p className="text-xs text-slate-500">Website Sections</p>
