@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
+import { dirname } from 'path';
 import { getSession } from '@/lib/auth';
 
 export async function POST(request: Request) {
@@ -19,10 +19,11 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = 'public/images/company-logos';
+    const uploadDir = './public/images/company-logos';
+    const fullDir = dirname(uploadDir);
     
     try {
-      await mkdir(uploadDir, { recursive: true });
+      await mkdir(fullDir, { recursive: true });
     } catch {}
 
     const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
