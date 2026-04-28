@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { existsSync, mkdirSync } from 'fs';
+import { writeFile, mkdir } from 'fs/promises';
+import { existsSync } from 'fs';
 import { getSession } from '@/lib/auth';
-import { join } from 'path';
 
 export async function POST(request: Request) {
   try {
@@ -21,12 +20,13 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(bytes);
 
     const uploadDir = 'public/images/company-logos';
-    if (!existsSync(uploadDir)) {
-      mkdirSync(uploadDir, { recursive: true });
-    }
+    
+    try {
+      await mkdir(uploadDir, { recursive: true });
+    } catch {}
 
     const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
-    const filepath = join(uploadDir, filename);
+    const filepath = `${uploadDir}/${filename}`;
 
     await writeFile(filepath, buffer);
 
