@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { dirname } from 'path';
+import { writeFile, access, mkdir } from 'fs/promises';
 import { getSession } from '@/lib/auth';
 
 export async function POST(request: Request) {
@@ -20,11 +19,12 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(bytes);
 
     const uploadDir = './public/images/company-logos';
-    const fullDir = dirname(uploadDir);
     
     try {
-      await mkdir(fullDir, { recursive: true });
-    } catch {}
+      await access(uploadDir);
+    } catch {
+      await mkdir(uploadDir, { recursive: true });
+    }
 
     const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
     const filepath = `${uploadDir}/${filename}`;
@@ -35,6 +35,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ logo: publicPath });
   } catch (err) {
     console.error('Upload error:', err);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: `Upload failed: ${message}` }, { status: 500 });
   }
 }
