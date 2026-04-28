@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
-import { writeFile, access, mkdir } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import { getSession } from '@/lib/auth';
+
+async function ensureDir(dir: string) {
+  try {
+    await mkdir(dir, { recursive: true });
+  } catch {}
+}
 
 export async function POST(request: Request) {
   try {
@@ -18,17 +24,14 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = './public/images/company-logos';
+    const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
     
-    try {
-      await access(uploadDir);
-    } catch {
-      await mkdir(uploadDir, { recursive: true });
+    const dirs = ['public/images/company-logos'];
+    for (const dir of dirs) {
+      await ensureDir(dir);
     }
 
-    const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
-    const filepath = `${uploadDir}/${filename}`;
-
+    const filepath = `public/images/company-logos/${filename}`;
     await writeFile(filepath, buffer);
 
     const publicPath = `images/company-logos/${filename}`;
