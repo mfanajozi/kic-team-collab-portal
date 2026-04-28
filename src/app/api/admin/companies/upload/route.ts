@@ -1,12 +1,8 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 import { getSession } from '@/lib/auth';
 
-async function ensureDir(dir: string) {
-  try {
-    await mkdir(dir, { recursive: true });
-  } catch {}
-}
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
@@ -26,13 +22,9 @@ export async function POST(request: Request) {
 
     const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
     
-    const dirs = ['public/images/company-logos'];
-    for (const dir of dirs) {
-      await ensureDir(dir);
-    }
+    const filePath = `${process.cwd()}/public/images/company-logos/${filename}`;
 
-    const filepath = `public/images/company-logos/${filename}`;
-    await writeFile(filepath, buffer);
+    await writeFile(filePath, buffer);
 
     const publicPath = `images/company-logos/${filename}`;
     return NextResponse.json({ logo: publicPath });
