@@ -20,6 +20,19 @@ async function run() {
     // ── Schema ────────────────────────────────────────────────────────────────
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS companies (
+        id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        key      VARCHAR(10) UNIQUE NOT NULL,
+        name     VARCHAR(60) NOT NULL,
+        domain   VARCHAR(100),
+        logo     VARCHAR(100),
+        is_active BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      );
+    `);
+    console.log('✅ companies table ready');
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email                VARCHAR(255) UNIQUE NOT NULL,
